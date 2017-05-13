@@ -1,5 +1,5 @@
 <?php
-$db_name="webappdb";
+$db_name="check";
 $mysql_user="root";
 $mysql_pass="";
 $server_name="localhost";

@@ -9,7 +9,7 @@ if ($conn->connect_error) {
  die("Connection failed: " . $conn->connect_error);
 } 
 
-$sql = "SELECT * FROM record";
+$sql = "SELECT * FROM result";
 
 $result = $conn->query($sql);
 

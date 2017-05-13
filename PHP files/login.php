@@ -1,18 +1,70 @@
 <?php
-require"dbconfig.php";
-$User_Name=$_POST["login_name"];
-$User_Pass=$_POST["login_pass"];
 
+/**
+ * @author Ravi Tamada
+ * @link http://www.androidhive.info/2012/01/android-login-and-registration-with-php-mysql-and-sqlite/ Complete tutorial
+ */
 
-$sql_query= "select Name from UserInformation where UserName like '$User_Name' and Password like '$User_Pass'";
-$result= mysqli_query($con, $sql_query);
+require_once 'include/DB_Functions.php';
+$db = new DB_Functions();
 
-if(mysqli_num_rows($result)>0)
-{ 
-$row= mysqli_fetch_assoc($result);    
-$name=$row["Name"];
-echo "Login Successful Welcome...".$name;
+// json response array
+$response = array("error" => FALSE);
+
+if (isset($_POST['email']) && isset($_POST['password'])) {
+
+    // receiving the post params
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // get the user by email and password
+    $user = $db->getUserByEmailAndPassword($email, $password);
+
+    if ($user != false) {
+        // use is found
+        $response["error"] = FALSE;
+        $response["uid"] = $user["unique_id"];
+        $response["user"]["name"] = $user["name"];
+        $response["user"]["email"] = $user["email"];
+        $response["user"]["created_at"] = $user["created_at"];
+        $response["user"]["updated_at"] = $user["updated_at"];
+        // $response["user"]["session_id"] = $user["session_id"];
+        echo json_encode($response);
+    } else {
+        // user is not found with the credentials
+        $response["error"] = TRUE;
+        $response["error_msg"] = "Login credentials are wrong. Please try again!";
+        echo json_encode($response);
+    }
+} else if (isset($_POST['session_id'])) {
+
+    // receiving the post params
+    $session_id = $_POST['session_id'];
+
+    // get the user by email and password
+    $user = $db->getUserBySessionId($session_id);
+
+    if ($user != false) {
+        // use is found
+        $response["error"] = FALSE;
+        $response["uid"] = $user["unique_id"];
+        $response["user"]["name"] = $user["name"];
+        $response["user"]["email"] = $user["email"];
+        $response["user"]["created_at"] = $user["created_at"];
+        $response["user"]["updated_at"] = $user["updated_at"];
+        $response["user"]["session_id"] = $user["session_id"];
+        echo json_encode($response);
+    } else {
+        // user is not found with the credentials
+        $response["error"] = TRUE;
+        $response["error_msg"] = "Login credentials are wrong. Please try again!";
+        echo json_encode($response);
+    }
+} else {
+    // required post params is missing
+    $response["error"] = TRUE;
+    $response["error_msg"] = "Required parameters email or password is missing!";
+    echo json_encode($response);
 }
-else { echo "Login Failed No User detail Avaliable";}
-
 ?>
+

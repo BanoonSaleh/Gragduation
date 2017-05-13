@@ -10,6 +10,6 @@ $HostUser = "root";
 $HostPass = "";
 
 //Define your database name here.
-$DatabaseName = "webappdb";
+$DatabaseName = "check";
 
 ?>
